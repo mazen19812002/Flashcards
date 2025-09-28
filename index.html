@@ -851,27 +851,26 @@
 
         // --- Functions ---
         async function fetchFileListFromGitHub() {
-            // Using a static list of files to avoid issues with GitHub API calls from the browser.
-            // If you add new .xlsx files to your repository, you will need to add them to this list manually.
-            const staticExcelFiles = [
-                'First-Year(Ahmad).xlsx',
-                'Second-Year-Primary(Ahmad).xlsx',
-                'Third-Year-Prep(Ahmad).xlsx'
-            ];
-
+            const repoUrl = 'https://api.github.com/repos/mazen19812002/Flashcards/contents/';
             try {
-                if (staticExcelFiles.length === 0) throw new Error('No .xlsx files are listed in the script.');
+                const response = await fetch(repoUrl);
+                if (!response.ok) throw new Error('Could not fetch file list from GitHub.');
+                const files = await response.json();
+                
+                const excelFiles = files
+                    .filter(file => file.name.endsWith('.xlsx'))
+                    .sort((a, b) => a.name.localeCompare(b.name));
+                
+                if (excelFiles.length === 0) throw new Error('No .xlsx files found in the GitHub repository.');
 
-                fileSelect.innerHTML = staticExcelFiles
-                    .sort((a, b) => a.localeCompare(b))
-                    .map(fileName => `<option value="${fileName}">${fileName}</option>`).join('');
+                fileSelect.innerHTML = excelFiles.map(file => `<option value="${file.name}">${file.name}</option>`).join('');
                 
                 fileSelectorContainer.classList.add('hidden');
                 fileSelect.classList.remove('hidden');
                 loadCardsBtn.classList.remove('hidden');
 
             } catch(error) {
-                console.error('Error populating file list:', error);
+                console.error('Error fetching file list:', error);
                 fileSelectorContainer.innerHTML = `<p style="color:var(--red-btn);">${error.message}</p>`;
             }
         }
@@ -1507,4 +1506,5 @@
     </script>
 </body>
 </html>
+
 
