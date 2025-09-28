@@ -851,7 +851,7 @@
 
         // --- Functions ---
         async function fetchFileListFromGitHub() {
-            const repoUrl = 'https://api.github.com/repos/mazen19812002/Flashcards/contents/';
+            const repoUrl = 'https://api.github.com/repos/mazen19812002/Flashcards/';
             try {
                 const response = await fetch(repoUrl);
                 if (!response.ok) throw new Error('Could not fetch file list from GitHub.');
